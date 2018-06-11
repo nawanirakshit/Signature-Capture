@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.nawanirakshit' // Your Package Name
 
 android {
     compileSdkVersion 27
@@ -22,59 +23,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-
-    group = 'com.rakshit.signaturecapture' // Your Package Name
-    version = '1.1' // Your Version Number
-
-    task generateSourcesJar(type: Jar) {
-        from android.sourceSets.main.java.srcDirs
-        classifier 'sources'
-    }
-
-    task generateJavaDocs(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath()
-                .join(File.pathSeparator))
-    }
-
-    task generateJavaDocsJar(type: Jar) {
-        from generateJavaDocs.destinationDir
-        classifier 'javadoc'
-    }
-    generateJavaDocsJar.dependsOn generateJavaDocs
-
-
-    bintray {
-        user = 'nawaniraks'
-        key = '6f0ace3081f262d459b003c21a25268425f82bdb'
-        // You can find it inside your Profile of Bintray
-        pkg {
-            repo = 'SignatureCapture'
-            // Repos Name That you have created in your Bintray Account
-            name = 'com.rakshit.signaturecapture'    //Package Name
-
-            version {
-                name = '1.1'
-                desc = 'Signature Capturing Repository'
-                released = new Date()
-                vcsTag = '1.1'
-            }
-
-            licenses = ['Apache-2.0']
-            vcsUrl = 'https://bintray.com/nawaniraks/SignatureCapture'
-        }
-        configurations = ['archives']
-    }
-
-
-    install {
-        repositories.mavenInstaller {
-            pom.groupId = 'com.rakshit.signaturecapture'
-            pom.version = '1.1'
-            pom.artifactId = project.name
-        }
-
     }
 }
 
