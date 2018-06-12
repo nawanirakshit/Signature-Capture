@@ -1,6 +1,7 @@
 package com.rakshit.signaturecapture;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -9,9 +10,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class CaptureSignature extends View {
 
@@ -24,6 +33,7 @@ public class CaptureSignature extends View {
     private Paint mPaint;
     private float mX, mY;
     private static final float TOLERANCE = 5;
+    boolean isChanged = false;
 
     public CaptureSignature(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -45,6 +55,68 @@ public class CaptureSignature extends View {
         a.recycle();
     }
 
+    /**
+     * Get signature as bitmap
+     *
+     * @return Bitmap
+     */
+    public Bitmap getSignatureBitmap() {
+        if (mBitmap != null) {
+            return mBitmap;
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * To check if the Signature is taken or not
+     *
+     * @return true if view is updated else false
+     */
+    public boolean isUpdated() {
+        return isChanged;
+    }
+
+    /**
+     * Fetching the bitmap
+     *
+     * @param v the Signature view
+     * @return Bitmap of Signature View
+     */
+    public Bitmap getViewBitmap(View v) {
+        v.clearFocus();
+        v.setPressed(false);
+
+        boolean willNotCache = v.willNotCacheDrawing();
+        v.setWillNotCacheDrawing(false);
+
+        // Reset the drawing cache background color to fully transparent
+        // for the duration of this operation
+        int color = v.getDrawingCacheBackgroundColor();
+        v.setDrawingCacheBackgroundColor(0);
+
+        if (color != 0) {
+            v.destroyDrawingCache();
+        }
+        v.buildDrawingCache();
+        Bitmap cacheBitmap = v.getDrawingCache();
+        if (cacheBitmap == null) {
+            Log.e("Exception >>>", "failed getViewBitmap(" + v + ")", new RuntimeException());
+            return null;
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
+
+        // Restore the view
+        v.destroyDrawingCache();
+        v.setWillNotCacheDrawing(willNotCache);
+        v.setDrawingCacheBackgroundColor(color);
+
+        return bitmap;
+    }
+
+
     // override onSizeChanged
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -53,6 +125,8 @@ public class CaptureSignature extends View {
         // your Canvas will draw onto the defined Bitmap
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+
+
     }
 
     // override onDraw
@@ -82,6 +156,7 @@ public class CaptureSignature extends View {
     }
 
     public void clearCanvas() {
+        isChanged = false;
         mPath.reset();
         invalidate();
     }
@@ -94,6 +169,7 @@ public class CaptureSignature extends View {
     //override the onTouchEvent
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        isChanged = true;
         float x = event.getX();
         float y = event.getY();
 

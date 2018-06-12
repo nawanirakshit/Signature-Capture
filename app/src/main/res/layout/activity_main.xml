@@ -1,23 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <com.rakshit.signaturecapture.CaptureSignature
-        android:id="@+id/signature_canvas"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        tools:context=".MainActivity">
 
-        android:background="#edeeef" />
+        <com.rakshit.signaturecapture.CaptureSignature
+            android:id="@+id/signature_canvas"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#edeeef" />
 
-    <!--
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:pen_color="#ea0b46"
-        app:pen_size="7dp"
-        -->
+        <!--
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:pen_color="#ea0b46"
+            app:pen_size="7dp"
+            -->
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signature_canvas"
+            android:onClick="onClearView"
+            android:text="Clear" />
+
+        <Button
+            android:id="@+id/btn_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_clear"
+            android:onClick="onCheckView"
+            android:text="Check Submit" />
+
+        <ImageView
+            android:id="@+id/iv_bitmap"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@+id/btn_check"
+            android:background="#edeeef"
+            android:scaleType="fitXY" />
+
+
+    </RelativeLayout>
+</ScrollView>
